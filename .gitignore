@@ -1,3 +1,10 @@
+# macOS
+.DS_Store
+
+# datasets (too large for GitHub)
+archive/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

@@ -1,1 +1,22 @@
-# ml-phishing-detector
+# Phishing Detector
+## Overview
+This project uses a trained machine learning model to form a phishing email detector. Given a pre-created data, the model classifies emails as either phishing or legitimate. 
+
+## Dataset
+This model is trained on a collection of phishing emails available at [the following site](https://www.kaggle.com/datasets/naserabdullahalam/phishing-email-dataset). Data includes the email text and binary labels. Raw datasets are not included in this repository due to file size limits. 
+
+## Tech/Framework Used
+* Python 3
+* pandas
+* scikit-learn
+* Regular Expressions (re) 
+
+## Installation
+Refer to requirements.txt for all dependencies needed to run this project. To install all libraries, run the following command:
+<pre>pip install -r requirements.txt</pre>
+
+## Tests
+Tests not currently added.
+
+## Authors
+Megan Parfitt (za23370@bristol.ac.uk)
