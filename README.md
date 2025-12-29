@@ -5,6 +5,9 @@ This project uses a trained machine learning model to form a phishing email dete
 ## Dataset
 This model is trained on a collection of phishing emails available at [the following site](https://www.kaggle.com/datasets/naserabdullahalam/phishing-email-dataset). Data includes the email text and binary labels. Raw datasets are not included in this repository due to file size limits. 
 
+## Rule-Based Detection
+Alongside the ML model, this system makes use of a rule-system to assist in classifying legitimate emails. A risk score is computed using factors surrounding links, language and formatting of emails, with each having a different weighted score. These scores are then combined and when exceeding a certain threshold (e.g. >= 6), the email is automatically classified as phishing regardless of the model's prediction. 
+
 ## Tech/Framework Used
 * Python 3
 * pandas
