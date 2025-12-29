@@ -1,3 +1,4 @@
+import joblib
 import re
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -19,13 +20,22 @@ def clean_text(text):
 X = df["text_combined"]
 y = df["label"].astype(int)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42)
+# class imbalance analysis
+print("Class distribution: ", y.value_counts())
+print("\nClass distribution percentages: ", y.value_counts(normalize=True) * 100)
+
+counts = y.value_counts()
+imbalanced_ratio = counts.max() / counts.min()
+print(f"\nImbalance Ratio (max/min): {imbalanced_ratio:.2f}x")
+
+# splitting dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state=42, stratify=y)
 
 X_train = X_train.apply(clean_text)
 X_test = X_test.apply(clean_text)
 
-# logisitic regression model pipeline
-logisitic_pipe = Pipeline(
+# logistic regression model pipeline
+logistic_pipe = Pipeline(
     [
         ('vectorizer', TfidfVectorizer()),
         ('classifier', LogisticRegression(random_state=42, max_iter=1000, class_weight='balanced'))
@@ -33,13 +43,11 @@ logisitic_pipe = Pipeline(
 )
 
 lr_param_grid = {
-    "vectorizer__ngram_range": [(1,1), (1,2)],
-    "vectorizer__min_df": [1, 3, 5],
     "classifier__C": [0.01, 0.1, 1, 10],
 }
 
 lr_search = GridSearchCV(
-    logisitic_pipe,
+    logistic_pipe,
     param_grid=lr_param_grid,
     scoring='f1',
     cv=3,
@@ -51,7 +59,7 @@ lr_search = GridSearchCV(
 svm_pipe = Pipeline(
     [
         ('vectorizer', TfidfVectorizer()),
-        ('classifier', svm.SVC(random_state=42))
+        ('classifier', svm.SVC(random_state=42, class_weight='balanced'))
     ]
 )
 
@@ -78,10 +86,26 @@ def model_accuracy(model, X_train, y_train, X_test, y_test, name="Model"):
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
 
-    print(f"{name} Accuracy: {accuracy:.4f}")
+    print(f"{name} Test Accuracy: {accuracy:.4f}")
     print(classification_report(y_test, y_pred))
 
     return accuracy
 
-model_accuracy(logisitic_pipe, X_train, y_train, X_test, y_test, name="Logistic Regression")
+model_accuracy(lr_search, X_train, y_train, X_test, y_test, name="Logistic Regression")
+print("Logistic Regression Parameters: ", lr_search.best_params_)
+print("Logistic Regression Best F1 Score: ", lr_search.best_score_)
+
 model_accuracy(svm_search, X_train, y_train, X_test, y_test, name="Linear SVM")
+print("SVM Parameters: ", svm_search.best_params_)
+print("SVM Best F1 Score: ", svm_search.best_score_)
+
+# saving the best model
+if lr_search.best_score_ >= svm_search.best_score_:
+    best_model = lr_search.best_estimator_
+    best_name = "logistic_regression"
+else:
+    best_model = svm_search.best_estimator_
+    best_name = "svm"
+
+best_model.fit(X_train, y_train)
+joblib.dump(best_model, f"{best_name}_phishing_model.pkl")
