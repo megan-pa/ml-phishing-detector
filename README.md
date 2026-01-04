@@ -20,7 +20,7 @@ The phishing detector has been exposed via an API built with FastAPI.
 
 ### Running the API
 From the root directory of the project file, run the following command:
-''' uvicorn api.main:app --reload --host 0.0.0.0 --port 8001 '''
+<pre>uvicorn api.main:app --reload --host 0.0.0.0 --port 8001</pre>
 
 ## Installation
 Refer to requirements.txt for all dependencies needed to run this project. To install all libraries, run the following command:
