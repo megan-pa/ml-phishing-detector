@@ -30,7 +30,7 @@ def link_rules(email_text):
 
     # suspicious domains
     for u in urls:
-        host = re.findall(r"https?://([^/]+)", u)
+        host = re.search(r"https?://([^/]+)", u)
         if host and host.group(1).split(":")[0] in SHORTENERS:
             score += 2
 
