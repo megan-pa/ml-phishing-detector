@@ -47,7 +47,9 @@ def ai_result_explanation(email_text, result):
     response = get_chat_completion(
         prompt = f"""
         You are a cybersecurity assistant. You have been tasked with determining whether an email you have received is either phishing or legitiamte. 
-        The email has been run through a ML model and a rule system to generate a risk score of whether the email is legitimate.
+        The email below has been analysed using a machine learning model and a rule-based detection system. 
+
+        Your tasked with explaining the classification outcome in a clear and user-friendly manner. 
 
         Here is the email text:
         \"\"\"{email_text}\"\"\"
@@ -55,7 +57,10 @@ def ai_result_explanation(email_text, result):
         Classification result:
         {result}
 
-        Explain clearly why this email was classifed as either phishing or legitimate. 
+        You should structure your response as follows with these subheadings:
+        1. Final verdict, make use of ML and risk score here (phishing or legitimate)
+        2. Key indicators in the email that influenced the decision, focus on the actual email text rather than the ML and risk score (bullet points)
+        3. Why there indicators matter (1-2 sentences)
         """
     )
 

@@ -2,14 +2,17 @@ import joblib
 from fastapi import FastAPI, File, UploadFile
 from pydantic import BaseModel
 from typing import List
-from detector import final_decision
+from detector import final_decision, ai_result_explanation
 from contextlib import asynccontextmanager
 
 BEST_MODEL = "artifacts/best_phishing_model.pkl"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.model = joblib.load(BEST_MODEL)
+    try:
+        app.state.model = joblib.load(BEST_MODEL)       
+    except Exception as e:
+        print(f"Error loading model: {e}")  
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -35,7 +38,8 @@ async def classify_email_batch(email_files: List[UploadFile] = File(...)):
         results.append(detector_result)
     return {"batch_classification": results}
 
-# TODO implement after AI explanation feature is added
 @app.post("/explain_email")
-def explain_email():
-    return {"explanation": "placeholder"}
+def explain_email(email_text: str):
+    detector_result = final_decision(email_text=email_text, model=app.state.model)
+    explanation = ai_result_explanation(email_text=email_text, result=detector_result)
+    return {"detector_result": detector_result, "explanation": explanation}
