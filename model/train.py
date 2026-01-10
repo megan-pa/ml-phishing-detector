@@ -10,14 +10,44 @@ from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from sklearn import svm
 
-df = pd.read_csv('../archive/phishing_email.csv')
-df = df.dropna(subset=["text_combined", "label"])
-df.info()
+df_text = pd.read_csv('../archive/phishing_email.csv')
+df_text= df_text.dropna(subset=["text_combined", "label"])
+
+df_addr = pd.read_csv('../archive/SpamAssasin.csv')
+df_addr = df_addr.dropna(subset=["subject", "body", "label"])
 
 def clean_text(text):
     text = str(text).lower()
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+df_text = df_text.rename(columns={"text_combined": "body"})
+df_text["subject"] = ""
+df_text["sender"] = ""
+df_text["body"] = df_text["body"].fillna("")
+df_text["label"] = df_text["label"].astype(int)
+
+df_addr["subject"] = df_addr["subject"].fillna("")
+df_addr["sender"] = df_addr["sender"].fillna("")
+df_addr["body"] = df_addr["body"].fillna("")
+df_addr["label"] = df_addr["label"].astype(int)
+
+print(df_text["label"].value_counts())
+print(df_addr["label"].value_counts())
+
+df = pd.concat(
+    [
+        df_text[["subject", "sender", "body", "label"]], 
+        df_addr[["subject", "sender", "body", "label"]]
+    ], 
+    ignore_index=True
+)
+
+df["text_combined"] = (
+    df["sender"].fillna("").astype(str) + " " +
+    df["subject"].fillna("").astype(str) + " " +
+    df["body"].fillna("").astype(str)
+)
 
 X = df["text_combined"]
 y = df["label"].astype(int)
