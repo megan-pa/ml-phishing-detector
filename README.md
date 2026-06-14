@@ -8,6 +8,14 @@ This model is trained on a collection of phishing emails available at [the follo
 ## Rule-Based Detection
 Alongside the ML model, this system makes use of a rule-system to assist in classifying legitimate emails. A risk score is computed using factors surrounding links, language and formatting of emails, with each having a different weighted score. These scores are then combined and when exceeding a certain threshold (e.g. >= 6), the email is automatically classified as phishing regardless of the model's prediction. 
 
+## Code Structure 
+### Architecture 
+Uses
+1. Machine learning model
+2. Rule-based detection
+
+### File Structure
+
 ## Tech/Framework Used
 * Python 3
 * pandas
@@ -28,6 +36,10 @@ Refer to requirements.txt for all dependencies needed to run this project. To in
 
 ## Tests
 Tests not currently added.
+
+## Limitations/Next Steps
+* Training the machine learning model to consider email addresses and subject lines.
+* ...
 
 ## Authors
 Megan Parfitt (za23370@bristol.ac.uk)

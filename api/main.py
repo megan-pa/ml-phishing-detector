@@ -43,3 +43,5 @@ def explain_email(email_text: str):
     detector_result = final_decision(email_text=email_text, model=app.state.model)
     explanation = ai_result_explanation(email_text=email_text, result=detector_result)
     return {"detector_result": detector_result, "explanation": explanation}
+
+# TODO implement AI integration or add quick, file upload and batch upload AI endpoints
