@@ -1,4 +1,5 @@
 import os
+import asyncio
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -29,8 +30,8 @@ def final_decision(email_text, model):
         "ml_score": ml_score,
     }
 
-def ai_result_explanation(email_text, result):
-    response = get_chat_completion(
+async def ai_result_explanation(email_text, result):
+    response = await get_chat_completion(
         prompt = f"""
         You are a cybersecurity assistant. You have been tasked with determining whether an email you have received is either phishing or legitiamte. 
         The email below has been analysed using a machine learning model and a rule-based detection system. 
@@ -53,9 +54,12 @@ def ai_result_explanation(email_text, result):
     return response
 
 if __name__ == "__main__":
-    best_model = joblib.load(MODEL_PATH)
-    result = final_decision("This is a test email, urgent", best_model)
-    explanation = ai_result_explanation("This is a test email, urgent", result)
+    async def main():
+        best_model = joblib.load(MODEL_PATH)
+        result = final_decision("This is a test email, urgent", best_model)
+        explanation = await ai_result_explanation("This is a test email, urgent", result)
 
-    print(result)
-    print(explanation)
+        print(result)
+        print(explanation)
+    
+    asyncio.run(main())

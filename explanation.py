@@ -1,15 +1,13 @@
 import os
-from openai import OpenAI
+import asyncio
+from openai import AsyncOpenAI
 
-client = OpenAI(api_key = os.environ["OPENAI_KEY"])
+client = AsyncOpenAI(api_key = os.environ["OPENAI_KEY"])
 
-def get_chat_completion(prompt, model="gpt-4"):
-    messages = [{"role": "user", "content": prompt}]
-    
-    response = client.chat.completions.create(
+async def get_chat_completion(prompt, model="gpt-4"):
+    response = await client.chat.completions.create(
         model=model,
-        messages=messages,
-        temperature=0
+        messages=[{"role": "user", "content": prompt}]
     )
 
     return response.choices[0].message.content

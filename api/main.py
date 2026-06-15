@@ -17,6 +17,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# --- API endpoints ---
+@app.get("/")
+def root():
+    return {"message": "API running successfully"}
+
+# TODO add /health endpoint 
+
+# TODO add rate limiting for general requests made
 @app.post("/classify_email")
 def quick_classify_email(email_text: str):
     detector_result = final_decision(email_text=email_text, model=app.state.model)
@@ -39,9 +47,10 @@ async def classify_email_batch(email_files: List[UploadFile] = File(...)):
     return {"batch_classification": results}
 
 @app.post("/explain_email")
-def explain_email(email_text: str):
+async def explain_email(email_text: str):
+    # TODO add rate limiting for users accessing the LLM
     detector_result = final_decision(email_text=email_text, model=app.state.model)
-    explanation = ai_result_explanation(email_text=email_text, result=detector_result)
+    explanation = await ai_result_explanation(email_text=email_text, result=detector_result)
     return {"detector_result": detector_result, "explanation": explanation}
 
 # TODO implement AI integration or add quick, file upload and batch upload AI endpoints
